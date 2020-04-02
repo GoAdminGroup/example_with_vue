@@ -11,7 +11,7 @@ backend文件夹下是所有后端开发文件，frontend文件夹下是所有�
 
 ## 步骤一
 
-后端编译二进制执行文件给前端。前端将文件放置于文件夹下。
+后端编译二进制执行文件给前端。前端将文件放置于文件夹下。当前代码依赖最新master分支的GoAdmin。使用go mod方式，执行以下命令：
 
 ```bash
 go build .
@@ -23,6 +23,7 @@ cp backend ./../frontend
 前端在文件夹下执行：
 
 ```bash
+cd frontend
 ./backend --debug=true
 ```
 
