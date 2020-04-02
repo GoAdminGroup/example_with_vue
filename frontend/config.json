@@ -1,0 +1,19 @@
+{
+  "database": {
+    "default": {
+      "max_idle_con": 50,
+      "max_open_con": 150,
+      "file": "./admin.db",
+      "driver": "sqlite"
+    }
+  },
+  "prefix": "admin",
+  "store": {
+    "path": "./uploads",
+    "prefix": "uploads"
+  },
+  "language": "en",
+  "index": "/",
+  "debug": true,
+  "color_scheme": "skin-black"
+}

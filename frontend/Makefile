@@ -1,0 +1,2 @@
+all:
+	./backend --debug=true
