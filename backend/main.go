@@ -26,6 +26,7 @@ func main() {
 		uploadDir, assetDir, srcDir, port, index string
 		debug, watchMode                         bool
 	)
+
 	flag.BoolVar(&debug, "debug", false, "debug mode")
 	flag.BoolVar(&watchMode, "watch", true, "watch mode")
 	flag.StringVar(&uploadDir, "upload", "./uploads", "upload dir")
