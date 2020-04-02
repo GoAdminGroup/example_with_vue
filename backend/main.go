@@ -96,10 +96,10 @@ func watch(watchDIR string) {
 						event.Op&fsnotify.Create == fsnotify.Create) {
 					cmd := exec.Command("npm", "--prefix", "./src", "run", "build")
 					err = cmd.Run()
-					if err != nil {
-						panic(err)
-					}
 					fmt.Println("building...")
+					if err != nil {
+						fmt.Println("files compile error", err)
+					}
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
