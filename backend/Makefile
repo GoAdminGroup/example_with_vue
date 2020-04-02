@@ -1,3 +1,3 @@
 all:
-	GO111MODULE=off go build .
+	go build .
 	mv backend ./../frontend/
