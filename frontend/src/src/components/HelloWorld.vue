@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    <img src="./../assets/logo.png">
     <h1>{{ msg }}</h1>
     <h2>Essential Links</h2>
     <ul>
@@ -76,8 +77,11 @@
           href="https://github.com/vuejs/awesome-vue"
           target="_blank"
         >
-          awesome-vvue
+          awesome-vue
         </a>
+      </li>
+      <li>
+          <router-link to='/goadmin'>go-admin</router-link>
       </li>
     </ul>
   </div>

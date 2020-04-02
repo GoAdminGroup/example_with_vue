@@ -24,6 +24,7 @@ cp backend ./../frontend
 
 ```bash
 cd frontend
+npm --prefix ./src run build
 ./backend --debug=true
 ```
 

@@ -88,10 +88,6 @@ func watch(watchDIR string) {
 				if !ok {
 					return
 				}
-				fmt.Println("event:", event)
-				if event.Op&fsnotify.Write == fsnotify.Write {
-					fmt.Println("modified file:", event.Name)
-				}
 				if !strings.Contains(event.Name, "___jb_tmp__") &&
 					(event.Op&fsnotify.Write == fsnotify.Write ||
 						event.Op&fsnotify.Create == fsnotify.Create) {
