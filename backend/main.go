@@ -15,8 +15,6 @@ import (
 	_ "github.com/GoAdminGroup/themes/adminlte"                    // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/fsnotify/fsnotify"
 	"github.com/gin-gonic/gin"
 )
@@ -46,8 +44,6 @@ func main() {
 	}
 
 	eng := engine.Default()
-
-	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfigFromJSON("./config.json").
 		Use(r); err != nil {
