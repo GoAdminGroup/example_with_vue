@@ -17,7 +17,7 @@ backend文件夹下是所有后端开发文件，frontend文件夹下是所有�
 
 ```bash
 # build binary file
-GO111MODULE=on go build .
+GO111MODULE=on go build -o ./backend .
 # give the binary file to all frontend developers
 cp backend ./../frontend
 ```
