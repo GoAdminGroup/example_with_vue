@@ -7,3 +7,6 @@ serve:
 
 build:
 	npm --prefix=./src run build
+
+help:
+	$(BACKEND) --help

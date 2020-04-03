@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -23,12 +24,13 @@ import (
 func main() {
 
 	var (
-		uploadDir, assetDir, srcDir, port, index string
-		debug, watchMode                         bool
+		uploadDir, assetDir, srcDir, port, index, watchIgnore string
+		debug, watchMode                                      bool
 	)
 
 	flag.BoolVar(&debug, "debug", false, "debug mode")
 	flag.BoolVar(&watchMode, "watch", true, "watch mode")
+	flag.StringVar(&watchIgnore, "ignore", "___jb", "watch ignore files, use comma split")
 	flag.StringVar(&uploadDir, "upload", "./uploads", "upload dir")
 	flag.StringVar(&assetDir, "assets", "./dist/static", "assets dist dir")
 	flag.StringVar(&index, "index", "./dist/index.html", "index html path")
@@ -59,13 +61,13 @@ func main() {
 	eng.HTMLFile("GET", "/admin/vue/*any", index, map[string]interface{}{})
 
 	if watchMode {
-		go watch(srcDir)
+		go watch(srcDir, watchIgnore)
 	}
 
 	_ = r.Run(":" + port)
 }
 
-func watch(watchDIR string) {
+func watch(dir, ignores string) {
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -75,25 +77,38 @@ func watch(watchDIR string) {
 		_ = watcher.Close()
 	}()
 
+	igFiles := strings.Split(ignores, ",")
+
 	done := make(chan bool)
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				fmt.Println("watch error: ", err)
+				fmt.Println("watch recover error: ", err)
 			}
 		}()
 		for {
 			select {
 			case event, ok := <-watcher.Events:
 				if !ok {
-					return
+					fmt.Println("watch events error")
+					break
 				}
-				if !strings.Contains(event.Name, "___jb_tmp__") &&
-					(event.Op&fsnotify.Write == fsnotify.Write ||
-						event.Op&fsnotify.Create == fsnotify.Create) {
+
+				ignore := false
+
+				// ignore jetbrains files change
+				for _, f := range igFiles {
+					if strings.Contains(event.Name, f) {
+						ignore = true
+						break
+					}
+				}
+
+				if !ignore && (event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create) {
+					fmt.Println(path.Base(event.Name) + " change")
+					fmt.Println("building....")
 					cmd := exec.Command("npm", "--prefix", "./src", "run", "build")
 					err = cmd.Run()
-					fmt.Println("building...")
 					if err != nil {
 						fmt.Println("build error", err)
 					} else {
@@ -102,21 +117,22 @@ func watch(watchDIR string) {
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
-					return
+					fmt.Println("watch errors")
+					break
 				}
 				fmt.Println("error:", err)
 			}
 		}
 	}()
 
-	_ = filepath.Walk(watchDIR, func(path string, info os.FileInfo, err error) error {
+	_ = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
-			path, err := filepath.Abs(path)
+			p, err := filepath.Abs(path)
 			if err != nil {
 				return err
 			}
-			checkErr(watcher.Add(path))
-			fmt.Println("Monitoring Dir: ", path)
+			checkErr(watcher.Add(p))
+			fmt.Println("Monitoring Dir: ", p)
 		}
 		return nil
 	})
