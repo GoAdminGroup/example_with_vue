@@ -15,6 +15,7 @@ import (
 	_ "github.com/GoAdminGroup/themes/adminlte"                    // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/fsnotify/fsnotify"
 	"github.com/gin-gonic/gin"
 )
@@ -22,30 +23,41 @@ import (
 func main() {
 
 	var (
-		uploadDir, assetDir, srcDir, port, index, watchIgnore string
-		debug, watchMode                                      bool
+		uploadDir, assetDir, srcDir, port, index, watchIgnore, configPath string
+		debug, watchMode, quiet                                           bool
 	)
 
 	flag.BoolVar(&debug, "debug", false, "debug mode")
 	flag.BoolVar(&watchMode, "watch", true, "watch mode")
+	flag.BoolVar(&quiet, "quiet", false, "disable log")
 	flag.StringVar(&watchIgnore, "ignore", "___jb", "watch ignore files, use comma split")
 	flag.StringVar(&uploadDir, "upload", "./uploads", "upload dir")
 	flag.StringVar(&assetDir, "assets", "./dist/static", "assets dist dir")
+	flag.StringVar(&configPath, "config", "./config.json", "config path")
 	flag.StringVar(&index, "index", "./dist/index.html", "index html path")
 	flag.StringVar(&srcDir, "src", "./src/src", "frontend src path")
 	flag.StringVar(&port, "port", "9033", "http listen port")
 	flag.Parse()
 
-	r := gin.Default()
-
-	if !debug {
+	if !debug || quiet {
 		gin.SetMode(gin.ReleaseMode)
 		gin.DefaultWriter = ioutil.Discard
 	}
 
+	r := gin.New()
+
 	eng := engine.Default()
 
-	if err := eng.AddConfigFromJSON("./config.json").
+	cfg := config.ReadFromJson(configPath)
+
+	if quiet {
+		cfg.Debug = false
+		cfg.AccessLogOff = true
+		cfg.ErrorLogOff = true
+		cfg.InfoLogOff = true
+	}
+
+	if err := eng.AddConfig(cfg).
 		Use(r); err != nil {
 		panic(err)
 	}
@@ -57,13 +69,13 @@ func main() {
 	eng.HTMLFile("GET", "/admin/vue/*any", index, map[string]interface{}{})
 
 	if watchMode {
-		go watch(srcDir, watchIgnore)
+		go watch(srcDir, watchIgnore, quiet)
 	}
 
 	_ = r.Run(":" + port)
 }
 
-func watch(dir, ignores string) {
+func watch(dir, ignores string, logOff bool) {
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -79,14 +91,14 @@ func watch(dir, ignores string) {
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				fmt.Println("watch recover error: ", err)
+				printOut(logOff, "watch recover error: ", err)
 			}
 		}()
 		for {
 			select {
 			case event, ok := <-watcher.Events:
 				if !ok {
-					fmt.Println("watch events error")
+					printOut(logOff, "watch events error")
 					break
 				}
 
@@ -101,22 +113,22 @@ func watch(dir, ignores string) {
 				}
 
 				if !ignore && (event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create) {
-					fmt.Println(path.Base(event.Name) + " change")
-					fmt.Println("building....")
+					printOut(logOff, path.Base(event.Name)+" change")
+					printOut(logOff, "building....")
 					cmd := exec.Command("npm", "--prefix", "./src", "run", "build")
 					err = cmd.Run()
 					if err != nil {
-						fmt.Println("build error", err)
+						printOut(logOff, "build error", err)
 					} else {
-						fmt.Println("build success")
+						printOut(logOff, "build success")
 					}
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
-					fmt.Println("watch errors")
+					printOut(logOff, "watch errors")
 					break
 				}
-				fmt.Println("error:", err)
+				printOut(logOff, "error:", err)
 			}
 		}
 	}()
@@ -128,12 +140,18 @@ func watch(dir, ignores string) {
 				return err
 			}
 			checkErr(watcher.Add(p))
-			fmt.Println("Monitoring Dir: ", p)
+			printOut(logOff, "Monitoring Dir: ", p)
 		}
 		return nil
 	})
 
 	<-done
+}
+
+func printOut(logOff bool, a ...interface{}) {
+	if !logOff {
+		fmt.Println(a...)
+	}
 }
 
 func checkErr(err error) {
