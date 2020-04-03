@@ -55,9 +55,8 @@ func main() {
 	r.Static("/uploads", uploadDir)
 	r.Static("/static", assetDir)
 
-	eng.HTML("GET", "/admin", DashboardPage)
-	eng.HTMLFile("GET", "/vue", index, map[string]interface{}{})
-	eng.HTMLFile("GET", "/vue/*any", index, map[string]interface{}{})
+	eng.HTMLFile("GET", "/admin/vue", index, map[string]interface{}{})
+	eng.HTMLFile("GET", "/admin/vue/*any", index, map[string]interface{}{})
 
 	if watchMode {
 		go watch(srcDir)
