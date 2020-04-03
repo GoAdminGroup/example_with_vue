@@ -57,6 +57,7 @@ func main() {
 
 	eng.HTML("GET", "/admin", DashboardPage)
 	eng.HTMLFile("GET", "/vue", index, map[string]interface{}{})
+	eng.HTMLFile("GET", "/vue/*any", index, map[string]interface{}{})
 
 	if watchMode {
 		go watch(srcDir)
@@ -95,7 +96,9 @@ func watch(watchDIR string) {
 					err = cmd.Run()
 					fmt.Println("building...")
 					if err != nil {
-						fmt.Println("files compile error", err)
+						fmt.Println("build error", err)
+					} else {
+						fmt.Println("build success")
 					}
 				}
 			case err, ok := <-watcher.Errors:
