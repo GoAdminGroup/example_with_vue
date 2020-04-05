@@ -16,6 +16,9 @@ backend文件夹下是所有后端开发文件，frontend文件夹下是所有�
 当前仓库代码依赖最新master分支的GoAdmin。使用go mod方式，执行以下命令：
 
 ```bash
+git clone https://github.com/GoAdminGroup/goadmin-vue-example.git
+cd backend
+
 # build binary file
 GO111MODULE=on go build -o ./backend .
 # give the binary file to all frontend developers
