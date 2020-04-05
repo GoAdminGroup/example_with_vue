@@ -6,6 +6,8 @@ A example show how to develop GoAdmin with vue.
 
 backend文件夹下是所有后端开发文件，frontend文件夹下是所有前端开发文件。
 
+注：本例子依赖sqlite，如果你使用windows，请先下载安装gcc。
+
 ![](http://quick.go-admin.cn/docs/vue-goadmin.png)
 
 
