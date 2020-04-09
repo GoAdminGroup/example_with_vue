@@ -2,8 +2,8 @@
     <div class="hello">
         <section class="content-header">
             <h1>
-                表格
-                <small>表格例子</small>
+                {{ title }}
+                <small>{{ description }}</small>
             </h1>
             <ol class="breadcrumb" style="margin-right: 30px;">
                 <li><a href="/admin"><i class="fa fa-dashboard"></i> 首页</a></li>
@@ -15,32 +15,19 @@
                 <div class="box-header with-border">
                     <div class="pull-right">
                         <div class="dropdown pull-right column-selector" style="margin-right: 10px">
-                            <button type="button" class="btn btn-sm btn-instagram dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-sm btn-instagram dropdown-toggle"
+                                    data-toggle="dropdown">
                                 <i class="fa fa-table"></i>
-                                &nbsp;
                                 <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu" role="menu" style="padding: 10px;max-height: 400px;overflow: scroll;">
+                            <ul class="dropdown-menu" role="menu"
+                                style="padding: 10px;max-height: 400px;overflow: scroll;">
                                 <li>
                                     <ul style="padding: 0;">
-                                        <li class="checkbox icheck" style="margin: 0;">
+                                        <li class="checkbox icheck" style="margin: 0;" v-for="item in thead">
                                             <label style="width: 100%;padding: 3px;">
-                                                <input type="checkbox" class="column-select-item" data-id="id" style="position: absolute; opacity: 0;">&nbsp;&nbsp;&nbsp;ID
-                                            </label>
-                                        </li>
-                                        <li class="checkbox icheck" style="margin: 0;">
-                                            <label style="width: 100%;padding: 3px;">
-                                                <input type="checkbox" class="column-select-item" data-id="name" style="position: absolute; opacity: 0;">&nbsp;&nbsp;&nbsp;Name
-                                            </label>
-                                        </li>
-                                        <li class="checkbox icheck" style="margin: 0;">
-                                            <label style="width: 100%;padding: 3px;">
-                                                <input type="checkbox" class="column-select-item" data-id="gender" style="position: absolute; opacity: 0;">&nbsp;&nbsp;&nbsp;Gender
-                                            </label>
-                                        </li>
-                                        <li class="checkbox icheck" style="margin: 0;">
-                                            <label style="width: 100%;padding: 3px;">
-                                                <input type="checkbox" class="column-select-item" data-id="age" style="position: absolute; opacity: 0;">&nbsp;&nbsp;&nbsp;Age
+                                                <input type="checkbox" class="column-select-item" data-id="{{item.field}}"
+                                                       style="position: absolute; opacity: 0;">&nbsp;&nbsp;&nbsp;{{item.head}}
                                             </label>
                                         </li>
                                     </ul>
@@ -72,267 +59,19 @@
                             <th style="text-align: center;">
                                 <input type="checkbox" class="grid-select-all" style="position: absolute; opacity: 0;">
                             </th>
-                            <th>
-                                ID
-                            </th>
-                            <th>
-                                Name
-                            </th>
-                            <th>
-                                Gender
-                            </th>
-                            <th>
-                                Age
+                            <th v-for="item in thead">
+                                {{ item.head }}
                             </th>
                         </tr>
-                        <tr>
+                        <tr v-for="(row, index) in tbody">
                             <td style="text-align: center;">
-                                <input type="checkbox" class="grid-row-checkbox" data-id="0" style="position: absolute; opacity: 0;">
+                                <input type="checkbox" class="grid-row-checkbox" data-id="{{index}}"
+                                       style="position: absolute; opacity: 0;">
                             </td>
-                            <td>0</td>
-                            <td>Jack</td>
-                            <td>men</td>
-                            <td>20</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center;">
-                                <input type="checkbox" class="grid-row-checkbox" data-id="1" style="position: absolute; opacity: 0;">
-                            </td>
-                            <td>1</td>
-                            <td>Jane</td>
-                            <td>women</td>
-                            <td>23</td>
+                            <td v-for="item in thead" v-html="row[item.field].content"></td>
                         </tr>
                         </tbody>
                     </table>
-                    <script>
-                        window.selectedRows = function () {
-                            let selected = [];
-                            $('.grid-row-checkbox:checked').each(function () {
-                                selected.push($(this).data('id'));
-                            });
-                            return selected;
-                        };
-                        const selectedAllFieldsRows = function () {
-                            let selected = [];
-                            $('.column-select-item:checked').each(function () {
-                                selected.push($(this).data('id'));
-                            });
-                            return selected;
-                        };
-                        const pjaxContainer = "#pjax-container";
-                        const noAnimation = "__go_admin_no_animation_";
-                        function iCheck(el) {
-                            el.iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
-                                if (this.checked) {
-                                    $(this).closest('tr').css('background-color', "#ffffd5");
-                                } else {
-                                    $(this).closest('tr').css('background-color', '');
-                                }
-                            });
-                        }
-                        $(function () {
-                            $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
-                                if (this.checked) {
-                                    $('.grid-row-checkbox').iCheck('check');
-                                } else {
-                                    $('.grid-row-checkbox').iCheck('uncheck');
-                                }
-                            });
-                            let items = $('.column-select-item');
-                            iCheck(items);
-                            iCheck($('.grid-row-checkbox'));
-                            let columns = getQueryVariable("__columns");
-                            if (columns === -1) {
-                                items.iCheck('check');
-                            } else {
-                                let columnsArr = columns.split(",");
-                                for (let i = 0; i < columnsArr.length; i++) {
-                                    for (let j = 0; j < items.length; j++) {
-                                        if (decodeURI(columnsArr[i]) === $(items[j]).attr("data-id")) {
-                                            $(items[j]).iCheck('check');
-                                        }
-                                    }
-                                }
-                            }
-                            let lastTd = $("table tr:last td:last div");
-                            if (lastTd.hasClass("dropdown")) {
-                                let popUpHeight = $("table tr:last td:last div ul").height();
-                                let trs = $("table tr");
-                                let totalHeight = 0;
-                                for (let i = 1; i < trs.length - 1; i++) {
-                                    totalHeight += $(trs[i]).height();
-                                }
-                                if (popUpHeight > totalHeight) {
-                                    let h = popUpHeight + 16;
-                                    $("table tbody").append("<tr style='height:" + h + "px;'></tr>");
-                                }
-                                trs = $("table tr");
-                                for (let i = trs.length - 1; i > 1; i--) {
-                                    let td = $(trs[i]).find("td:last-child div");
-                                    let combineHeight = $(trs[i]).height() / 2 - 20;
-                                    for (let j = i + 1; j < trs.length; j++) {
-                                        combineHeight += $(trs[j]).height();
-                                    }
-                                    if (combineHeight < popUpHeight) {
-                                        td.removeClass("dropdown");
-                                        td.addClass("dropup");
-                                    }
-                                }
-                            }
-                            let sort = getQueryVariable("__sort");
-                            let sort_type = getQueryVariable("__sort_type");
-                            if (sort !== -1 && sort_type !== -1) {
-                                let sortFa = $('#sort-' + sort);
-                                if (sort_type === 'asc') {
-                                    sortFa.attr('href', '?__sort=' + sort + "&__sort_type=desc")
-                                } else {
-                                    sortFa.attr('href', '?__sort=' + sort + "&__sort_type=asc")
-                                }
-                                sortFa.removeClass('fa-sort');
-                                sortFa.addClass('fa-sort-amount-' + sort_type);
-                            }
-                        });
-                        $('.column-select-all').on('click', function () {
-                            if ($(this).data('check') === '') {
-                                $('.column-select-item').iCheck('check');
-                                $(this).data('check', 'true')
-                            } else {
-                                $('.column-select-item').iCheck('uncheck');
-                                $(this).data('check', '')
-                            }
-                        });
-                        $('.column-select-submit').on('click', function () {
-                            let param = new Map();
-                            param.set('__columns', selectedAllFieldsRows().join(','));
-                            param.set(noAnimation, 'true');
-                            $.pjax({
-                                url: addParameterToURL(param),
-                                container: pjaxContainer
-                            });
-                            toastr.success('加载成功 !');
-                        });
-                        function getQueryVariable(variable) {
-                            let query = window.location.search.substring(1);
-                            let vars = query.split("&");
-                            for (let i = 0; i < vars.length; i++) {
-                                let pair = vars[i].split("=");
-                                if (pair[0] === variable) {
-                                    return pair[1];
-                                }
-                            }
-                            return -1;
-                        }
-                        function addParameterToURL(params) {
-                            let newUrl = location.href.replace("#", "");
-                            for (let [field, value] of params) {
-                                if (getQueryVariable(field) !== -1) {
-                                    newUrl = replaceParamVal(newUrl, field, value);
-                                } else {
-                                    if (newUrl.indexOf("?") > 0) {
-                                        newUrl = newUrl + "&" + field + "=" + value;
-                                    } else {
-                                        newUrl = newUrl + "?" + field + "=" + value;
-                                    }
-                                }
-                            }
-                            return newUrl
-                        }
-                        function replaceParamVal(oUrl, paramName, replaceWith) {
-                            let re = eval('/(' + paramName + '=)([^&]*)/gi');
-                            return oUrl.replace(re, paramName + '=' + replaceWith);
-                        }
-                        $(function () {
-                            $('.editable-td-select').editable({
-                                "type": "select",
-                                "emptytext": "<i class=\"fa fa-pencil\"><\/i>"
-                            });
-                            $('.editable-td-text').editable({
-                                emptytext: "<i class=\"fa fa-pencil\"><\/i>",
-                                type: "text"
-                            });
-                            $('.editable-td-datetime').editable({
-                                "type": "combodate",
-                                "emptytext": "<i class=\"fa fa-pencil\"><\/i>",
-                                "format": "YYYY-MM-DD HH:mm:ss",
-                                "viewformat": "YYYY-MM-DD HH:mm:ss",
-                                "template": "YYYY-MM-DD HH:mm:ss",
-                                "combodate": {"maxYear": 2035}
-                            });
-                            $('.editable-td-date').editable({
-                                "type": "combodate",
-                                "emptytext": "<i class=\"fa fa-pencil\"><\/i>",
-                                "format": "YYYY-MM-DD",
-                                "viewformat": "YYYY-MM-DD",
-                                "template": "YYYY-MM-DD",
-                                "combodate": {"maxYear": 2035}
-                            });
-                            $('.editable-td-year').editable({
-                                "type": "combodate",
-                                "emptytext": "<i class=\"fa fa-pencil\"><\/i>",
-                                "format": "YYYY",
-                                "viewformat": "YYYY",
-                                "template": "YYYY",
-                                "combodate": {"maxYear": 2035}
-                            });
-                            $('.editable-td-month').editable({
-                                "type": "combodate",
-                                "emptytext": "<i class=\"fa fa-pencil\"><\/i>",
-                                "format": "MM",
-                                "viewformat": "MM",
-                                "template": "MM",
-                                "combodate": {"maxYear": 2035}
-                            });
-                            $('.editable-td-day').editable({
-                                "type": "combodate",
-                                "emptytext": "<i class=\"fa fa-pencil\"><\/i>",
-                                "format": "DD",
-                                "viewformat": "DD",
-                                "template": "DD",
-                                "combodate": {"maxYear": 2035}
-                            });
-                            $('.editable-td-textarea').editable({
-                                "type": "textarea",
-                                "rows": 10,
-                                "emptytext": "<i class=\"fa fa-pencil\"><\/i>"
-                            });
-                            $(".info_edit_switch").bootstrapSwitch({
-                                onSwitchChange: function (event, state) {
-                                    let obejct = $(event.target);
-                                    let val = "";
-                                    if (state) {
-                                        val = obejct.closest('.bootstrap-switch').next().val();
-                                    } else {
-                                        val = obejct.closest('.bootstrap-switch').next().next().val()
-                                    }
-                                    $.ajax({
-                                        method: 'post',
-                                        url: obejct.data("updateurl"),
-                                        data: {
-                                            name: obejct.data("field"),
-                                            value: val,
-                                            pk: obejct.data("pk")
-                                        },
-                                        success: function (data) {
-                                            if (typeof (data) === "string") {
-                                                data = JSON.parse(data);
-                                            }
-                                            if (data.code !== 200) {
-                                                swal(data.msg, '', 'error');
-                                            }
-                                        },
-                                        error: function (data) {
-                                            if (data.responseText !== "") {
-                                                swal(data.responseJSON.msg, '', 'error');
-                                            } else {
-                                                swal("错误", '', 'error');
-                                            }
-                                        },
-                                    });
-                                }
-                            })
-                        });
-                    </script>
                     <style>
                         table tbody tr td {
                             word-wrap: break-word;
@@ -340,51 +79,7 @@
                         }
                     </style>
                 </div>
-                <div class="box-footer clearfix">
-                    <div style="float: left;margin-top: 21px;">showing <b>0</b> to
-                        <b>10</b> of <b>50</b> entries &nbsp;&nbsp;&nbsp;
-                    </div>
-                    <ul class="pagination pagination-sm no-margin pull-right">
-                        <li class="page-item disabled">
-                            <span class="page-link">«</span>
-                        </li>
-                        <li class="page-item active"><span class="page-link">1</span></li>
-                        <li class="page-item"><a class="page-link" href="/admin/table?__page=2&amp;__pageSize=10&amp;__sort=id&amp;__sort_type=desc&amp;__go_admin_no_animation_=true">2</a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="/admin/table?__page=3&amp;__pageSize=10&amp;__sort=id&amp;__sort_type=desc&amp;__go_admin_no_animation_=true">3</a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="/admin/table?__page=4&amp;__pageSize=10&amp;__sort=id&amp;__sort_type=desc&amp;__go_admin_no_animation_=true">4</a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="/admin/table?__page=5&amp;__pageSize=10&amp;__sort=id&amp;__sort_type=desc&amp;__go_admin_no_animation_=true">5</a>
-                        </li>
-                        <li class="page-item ">
-                            <a class="page-link" href="/admin/table?__page=2&amp;__pageSize=10&amp;__sort=id&amp;__sort_type=desc" rel="next">»</a>
-                        </li>
-                    </ul>
-                    <label class="control-label pull-right" style="margin-right: 10px; font-weight: 100;">
-                        <small>show</small>&nbsp;
-                        <select class="input-sm grid-per-pager" name="per-page">
-                            <option value="/admin/table?__page=1&amp;__sort=id&amp;__sort_type=desc&amp;__go_admin_no_animation_=true&amp;__pageSize=10" selected="">
-                                10
-                            </option>
-                            <option value="/admin/table?__page=1&amp;__sort=id&amp;__sort_type=desc&amp;__go_admin_no_animation_=true&amp;__pageSize=20" zgotmplz="">
-                                20
-                            </option>
-                            <option value="/admin/table?__page=1&amp;__sort=id&amp;__sort_type=desc&amp;__go_admin_no_animation_=true&amp;__pageSize=30" zgotmplz="">
-                                30
-                            </option>
-                            <option value="/admin/table?__page=1&amp;__sort=id&amp;__sort_type=desc&amp;__go_admin_no_animation_=true&amp;__pageSize=50" zgotmplz="">
-                                50
-                            </option>
-                        </select>
-                        <small>entries</small>
-                    </label>
-                    <script>
-                        let gridPerPaper = $('.grid-per-pager');
-                        gridPerPaper.on('change', function () {
-                            $.pjax({url: this.value, container: '#pjax-container'});
-                        });
-                    </script>
+                <div class="box-footer clearfix" v-html="footer">
                 </div>
             </div>
         </section>
@@ -396,10 +91,276 @@
         name: 'Table',
         data() {
             return {
-                msg: 'Table'
+                title: '',
+                description: '',
+                footer: '',
+                thead: [],
+                tbody: []
+            }
+        },
+        created: function () {
+            console.log('created', this.msg);
+            this.getPanelData()
+        },
+        methods: {
+            getPanelData() {
+                this.$ajax({
+                    method: 'get',
+                    url: '/admin/api/list/manager',
+                }).then((res) => {
+                    console.log(res.data);
+                    if (res.data.code === 200) {
+                        let panel = res.data.data.panel;
+                        this.title = panel.title;
+                        this.description = panel.description;
+                        this.thead = panel.thead;
+                        this.tbody = panel.info_list;
+                        this.footer = res.data.data.footer;
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
             }
         }
     }
+
+    window.selectedRows = function () {
+        let selected = [];
+        $('.grid-row-checkbox:checked').each(function () {
+            selected.push($(this).data('id'));
+        });
+        return selected;
+    };
+    const selectedAllFieldsRows = function () {
+        let selected = [];
+        $('.column-select-item:checked').each(function () {
+            selected.push($(this).data('id'));
+        });
+        return selected;
+    };
+    const pjaxContainer = "#pjax-container";
+    const noAnimation = "__go_admin_no_animation_";
+
+    function iCheck(el) {
+        el.iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+            if (this.checked) {
+                $(this).closest('tr').css('background-color', "#ffffd5");
+            } else {
+                $(this).closest('tr').css('background-color', '');
+            }
+        });
+    }
+
+    $(function () {
+        $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
+            if (this.checked) {
+                $('.grid-row-checkbox').iCheck('check');
+            } else {
+                $('.grid-row-checkbox').iCheck('uncheck');
+            }
+        });
+        let items = $('.column-select-item');
+        iCheck(items);
+        iCheck($('.grid-row-checkbox'));
+        let columns = getQueryVariable("__columns");
+        if (columns === -1) {
+            items.iCheck('check');
+        } else {
+            let columnsArr = columns.split(",");
+            for (let i = 0; i < columnsArr.length; i++) {
+                for (let j = 0; j < items.length; j++) {
+                    if (decodeURI(columnsArr[i]) === $(items[j]).attr("data-id")) {
+                        $(items[j]).iCheck('check');
+                    }
+                }
+            }
+        }
+        let lastTd = $("table tr:last td:last div");
+        if (lastTd.hasClass("dropdown")) {
+            let popUpHeight = $("table tr:last td:last div ul").height();
+            let trs = $("table tr");
+            let totalHeight = 0;
+            for (let i = 1; i < trs.length - 1; i++) {
+                totalHeight += $(trs[i]).height();
+            }
+            if (popUpHeight > totalHeight) {
+                let h = popUpHeight + 16;
+                $("table tbody").append("<tr style='height:" + h + "px;'></tr>");
+            }
+            trs = $("table tr");
+            for (let i = trs.length - 1; i > 1; i--) {
+                let td = $(trs[i]).find("td:last-child div");
+                let combineHeight = $(trs[i]).height() / 2 - 20;
+                for (let j = i + 1; j < trs.length; j++) {
+                    combineHeight += $(trs[j]).height();
+                }
+                if (combineHeight < popUpHeight) {
+                    td.removeClass("dropdown");
+                    td.addClass("dropup");
+                }
+            }
+        }
+        let sort = getQueryVariable("__sort");
+        let sort_type = getQueryVariable("__sort_type");
+        if (sort !== -1 && sort_type !== -1) {
+            let sortFa = $('#sort-' + sort);
+            if (sort_type === 'asc') {
+                sortFa.attr('href', '?__sort=' + sort + "&__sort_type=desc")
+            } else {
+                sortFa.attr('href', '?__sort=' + sort + "&__sort_type=asc")
+            }
+            sortFa.removeClass('fa-sort');
+            sortFa.addClass('fa-sort-amount-' + sort_type);
+        }
+    });
+    $('.column-select-all').on('click', function () {
+        if ($(this).data('check') === '') {
+            $('.column-select-item').iCheck('check');
+            $(this).data('check', 'true')
+        } else {
+            $('.column-select-item').iCheck('uncheck');
+            $(this).data('check', '')
+        }
+    });
+    $('.column-select-submit').on('click', function () {
+        let param = new Map();
+        param.set('__columns', selectedAllFieldsRows().join(','));
+        param.set(noAnimation, 'true');
+        $.pjax({
+            url: addParameterToURL(param),
+            container: pjaxContainer
+        });
+        toastr.success('加载成功 !');
+    });
+
+    function getQueryVariable(variable) {
+        let query = window.location.search.substring(1);
+        let vars = query.split("&");
+        for (let i = 0; i < vars.length; i++) {
+            let pair = vars[i].split("=");
+            if (pair[0] === variable) {
+                return pair[1];
+            }
+        }
+        return -1;
+    }
+
+    function addParameterToURL(params) {
+        let newUrl = location.href.replace("#", "");
+        for (let [field, value] of params) {
+            if (getQueryVariable(field) !== -1) {
+                newUrl = replaceParamVal(newUrl, field, value);
+            } else {
+                if (newUrl.indexOf("?") > 0) {
+                    newUrl = newUrl + "&" + field + "=" + value;
+                } else {
+                    newUrl = newUrl + "?" + field + "=" + value;
+                }
+            }
+        }
+        return newUrl
+    }
+
+    function replaceParamVal(oUrl, paramName, replaceWith) {
+        let re = eval('/(' + paramName + '=)([^&]*)/gi');
+        return oUrl.replace(re, paramName + '=' + replaceWith);
+    }
+
+    $(function () {
+        $('.editable-td-select').editable({
+            "type": "select",
+            "emptytext": "<i class=\"fa fa-pencil\"><\/i>"
+        });
+        $('.editable-td-text').editable({
+            emptytext: "<i class=\"fa fa-pencil\"><\/i>",
+            type: "text"
+        });
+        $('.editable-td-datetime').editable({
+            "type": "combodate",
+            "emptytext": "<i class=\"fa fa-pencil\"><\/i>",
+            "format": "YYYY-MM-DD HH:mm:ss",
+            "viewformat": "YYYY-MM-DD HH:mm:ss",
+            "template": "YYYY-MM-DD HH:mm:ss",
+            "combodate": {"maxYear": 2035}
+        });
+        $('.editable-td-date').editable({
+            "type": "combodate",
+            "emptytext": "<i class=\"fa fa-pencil\"><\/i>",
+            "format": "YYYY-MM-DD",
+            "viewformat": "YYYY-MM-DD",
+            "template": "YYYY-MM-DD",
+            "combodate": {"maxYear": 2035}
+        });
+        $('.editable-td-year').editable({
+            "type": "combodate",
+            "emptytext": "<i class=\"fa fa-pencil\"><\/i>",
+            "format": "YYYY",
+            "viewformat": "YYYY",
+            "template": "YYYY",
+            "combodate": {"maxYear": 2035}
+        });
+        $('.editable-td-month').editable({
+            "type": "combodate",
+            "emptytext": "<i class=\"fa fa-pencil\"><\/i>",
+            "format": "MM",
+            "viewformat": "MM",
+            "template": "MM",
+            "combodate": {"maxYear": 2035}
+        });
+        $('.editable-td-day').editable({
+            "type": "combodate",
+            "emptytext": "<i class=\"fa fa-pencil\"><\/i>",
+            "format": "DD",
+            "viewformat": "DD",
+            "template": "DD",
+            "combodate": {"maxYear": 2035}
+        });
+        $('.editable-td-textarea').editable({
+            "type": "textarea",
+            "rows": 10,
+            "emptytext": "<i class=\"fa fa-pencil\"><\/i>"
+        });
+        $(".info_edit_switch").bootstrapSwitch({
+            onSwitchChange: function (event, state) {
+                let obejct = $(event.target);
+                let val = "";
+                if (state) {
+                    val = obejct.closest('.bootstrap-switch').next().val();
+                } else {
+                    val = obejct.closest('.bootstrap-switch').next().next().val()
+                }
+                $.ajax({
+                    method: 'post',
+                    url: obejct.data("updateurl"),
+                    data: {
+                        name: obejct.data("field"),
+                        value: val,
+                        pk: obejct.data("pk")
+                    },
+                    success: function (data) {
+                        if (typeof (data) === "string") {
+                            data = JSON.parse(data);
+                        }
+                        if (data.code !== 200) {
+                            swal(data.msg, '', 'error');
+                        }
+                    },
+                    error: function (data) {
+                        if (data.responseText !== "") {
+                            swal(data.responseJSON.msg, '', 'error');
+                        } else {
+                            swal("错误", '', 'error');
+                        }
+                    },
+                });
+            }
+        })
+    });
+
+    let gridPerPaper = $('.grid-per-pager');
+    gridPerPaper.on('change', function () {
+        $.pjax({url: this.value, container: '#pjax-container'});
+    });
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

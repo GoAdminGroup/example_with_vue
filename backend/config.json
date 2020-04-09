@@ -15,5 +15,6 @@
   "language": "cn",
   "index": "/vue",
   "debug": true,
-  "color_scheme": "skin-black"
+  "color_scheme": "skin-black",
+  "open_admin_api": true
 }
