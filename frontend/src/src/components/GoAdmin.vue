@@ -11,6 +11,9 @@
             <li>
                 <a href="https://www.go-admin.com" target="_blank">Official</a>
             </li>
+            <li>
+                <router-link to='/table'>Table</router-link>
+            </li>
         </ul>
     </div>
 </template>
@@ -41,5 +44,13 @@
     }
     a {
         color: #42b983;
+    }
+    .hello {
+        font-family: 'Avenir', Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 60px;
     }
 </style>
