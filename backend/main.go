@@ -23,8 +23,8 @@ import (
 func main() {
 
 	var (
-		uploadDir, assetDir, srcDir, port, index, watchIgnore, configPath string
-		debug, watchMode, quiet                                           bool
+		uploadDir, assetDir, srcDir, port, index, watchIgnore, configPath, theme string
+		debug, watchMode, quiet                                                  bool
 	)
 
 	flag.BoolVar(&debug, "debug", false, "debug mode")
@@ -35,8 +35,9 @@ func main() {
 	flag.StringVar(&assetDir, "assets", "./dist/static", "assets dist dir")
 	flag.StringVar(&configPath, "config", "./config.json", "config path")
 	flag.StringVar(&index, "index", "./dist/index.html", "index html path")
-	flag.StringVar(&srcDir, "src", "./src/src", "frontend src path")
+	flag.StringVar(&srcDir, "src", "./src/adminlte/src", "frontend src path")
 	flag.StringVar(&port, "port", "9033", "http listen port")
+	flag.StringVar(&theme, "theme", "adminlte", "ui theme")
 	flag.Parse()
 
 	if !debug || quiet {
@@ -69,13 +70,13 @@ func main() {
 	eng.HTMLFile("GET", "/admin/vue/*any", index, map[string]interface{}{})
 
 	if watchMode {
-		go watch(srcDir, watchIgnore, quiet)
+		go watch(srcDir, watchIgnore, theme, quiet)
 	}
 
 	_ = r.Run(":" + port)
 }
 
-func watch(dir, ignores string, logOff bool) {
+func watch(dir, ignores, theme string, logOff bool) {
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -115,7 +116,7 @@ func watch(dir, ignores string, logOff bool) {
 				if !ignore && (event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create) {
 					printOut(logOff, path.Base(event.Name)+" change")
 					printOut(logOff, "building....")
-					cmd := exec.Command("npm", "--prefix", "./src", "run", "build")
+					cmd := exec.Command("npm", "--prefix", "./src/"+theme, "run", "build")
 					err = cmd.Run()
 					if err != nil {
 						printOut(logOff, "build error", err)
