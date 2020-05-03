@@ -16,5 +16,6 @@
   "index": "/vue",
   "debug": true,
   "color_scheme": "skin-black",
+  "theme": "sword",
   "open_admin_api": true
 }

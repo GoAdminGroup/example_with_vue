@@ -13,6 +13,7 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"               // web framework adapter
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite" // sql driver
 	_ "github.com/GoAdminGroup/themes/adminlte"                    // ui theme
+	_ "github.com/GoAdminGroup/themes/sword"                       // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -23,7 +24,7 @@ import (
 func main() {
 
 	var (
-		uploadDir, assetDir, srcDir, port, index, watchIgnore, configPath, theme string
+		uploadDir, assetDir, srcDir, port, index, watchIgnore, configPath, uitheme, theme string
 		debug, watchMode, quiet                                                  bool
 	)
 
@@ -35,9 +36,10 @@ func main() {
 	flag.StringVar(&assetDir, "assets", "./dist/static", "assets dist dir")
 	flag.StringVar(&configPath, "config", "./config.json", "config path")
 	flag.StringVar(&index, "index", "./dist/index.html", "index html path")
-	flag.StringVar(&srcDir, "src", "./src/adminlte/src", "frontend src path")
+	flag.StringVar(&srcDir, "src", "./src/", "frontend src path")
 	flag.StringVar(&port, "port", "9033", "http listen port")
-	flag.StringVar(&theme, "theme", "adminlte", "ui theme")
+	flag.StringVar(&uitheme, "ui_theme", "adminlte", "ui theme")
+	flag.StringVar(&theme, "theme", "adminlte", "GoAdmin theme")
 	flag.Parse()
 
 	if !debug || quiet {
@@ -58,6 +60,8 @@ func main() {
 		cfg.InfoLogOff = true
 	}
 
+	fmt.Println("cfg.Theme", cfg.Theme)
+
 	if err := eng.AddConfig(cfg).
 		Use(r); err != nil {
 		panic(err)
@@ -70,7 +74,7 @@ func main() {
 	eng.HTMLFile("GET", "/admin/vue/*any", index, map[string]interface{}{})
 
 	if watchMode {
-		go watch(srcDir, watchIgnore, theme, quiet)
+		go watch(srcDir + uitheme + "/src", watchIgnore, uitheme, quiet)
 	}
 
 	_ = r.Run(":" + port)

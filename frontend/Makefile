@@ -3,7 +3,7 @@ BACKEND=./backend
 all: serve
 
 serve:
-	$(BACKEND) --debug=true
+	$(BACKEND)
 
 serve-quiet:
 	$(BACKEND) --debug=true --quiet=true
