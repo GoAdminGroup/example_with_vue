@@ -10,7 +10,7 @@ backend文件夹下是所有后端开发文件，frontend文件夹下是所有�
 
 **注：本例子依赖sqlite，如果你使用windows，请先下载安装gcc。**
 
-![](http://quick.go-admin.cn/docs/vue-goadmin.png)
+![](http://quick.go-admin.cn/docs/vue-goadmin-2.png)
 
 ## 前端UI框架
 
@@ -45,9 +45,9 @@ cp backend ./../frontend
 ```bash
 cd frontend
 # build vue
-npm --prefix ./src run build
+NODE_ENV=production npm --prefix ./src run build
 # use the backend binary file to serve instead of node
-./backend --debug=true
+NODE_ENV=production ./backend  --debug=true --theme=sword --ui_theme=element 
 ```
 
 更多命令，请看 Makefile。

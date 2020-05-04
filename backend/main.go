@@ -152,7 +152,7 @@ func watch(dir, ignores, theme string, logOff bool) {
 				return err
 			}
 			checkErr(watcher.Add(p))
-			printOut(logOff, "Monitoring Dir: ", p)
+			//printOut(logOff, "Monitoring Dir: ", p)
 		}
 		return nil
 	})
