@@ -2,7 +2,9 @@
 
 A example show how to develop GoAdmin with vue.
 
-一个例子展示如何利用GoAdmin结合vue的前后端开发流程。
+有人说GoAdmin不能做前后分离，我笑了。
+
+这是一个例子展示如何利用GoAdmin结合vue的前后端开发流程。
 
 backend文件夹下是所有后端开发文件，frontend文件夹下是所有前端开发文件。
 
