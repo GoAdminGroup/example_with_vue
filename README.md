@@ -10,8 +10,17 @@ backend文件夹下是所有后端开发文件，frontend文件夹下是所有�
 
 ![](http://quick.go-admin.cn/docs/vue-goadmin.png)
 
+## 前端UI框架
 
-## 步骤一
+选取目前主流的三个UI vue Admin框架作为例子：
+
+- [adminlte](https://github.com/devjin0617/vue2-admin-lte)
+- [element ui](https://github.com/PanJiaChen/vue-element-admin)
+- [ant design](https://github.com/iczer/vue-antd-admin)
+
+## 开发流程
+
+### 步骤一
 
 后端开发人员编译二进制执行文件给前端开发人员。前端开发人员将二进制可执行文件放置于前端文件夹下。
 
@@ -27,7 +36,7 @@ GO111MODULE=on go build -o ./backend .
 cp backend ./../frontend
 ```
 
-## 步骤二
+### 步骤二
 
 前端在前端文件夹下执行：
 
@@ -38,6 +47,8 @@ npm --prefix ./src run build
 # use the backend binary file to serve instead of node
 ./backend --debug=true
 ```
+
+更多命令，请看 Makefile。
 
 打开：[http://localhost:9033/admin/login](http://localhost:9033/admin/login)，登录后可以看到对应vue页面。
 
