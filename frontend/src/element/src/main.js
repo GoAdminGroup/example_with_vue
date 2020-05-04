@@ -50,14 +50,21 @@ new Vue({
   created: function() {
     const that = this
     /* eslint-disable */
-    $('.sidebar a').on('click', function(e) {
-      const href = $(this).attr('href')
-      const now_url = document.location.href
-      const url_prefix = '/admin/vue'
+    let jump = function(ele, e) {
+      let href = ele.attr('href');
+      const now_url = document.location.href;
+      const url_prefix = '/admin/vue';
+      href = href.replace(window.location.protocol + "//" + window.location.host, "");
       if (href.indexOf(url_prefix) !== -1 && now_url.indexOf(url_prefix) !== -1) {
-        e.preventDefault()
-        that.$router.push({ path: $(this).attr('href').replace(url_prefix, '') })
+        e.preventDefault();
+        that.$router.push({ path: href.replace(url_prefix, '') })
       }
+    };
+    $('.sidebar a').on('click', function(e) {
+      jump($(this), e)
+    });
+    $('.nav.nav-tabs a').on('click', function(e) {
+      jump($(this), e)
     })
   },
   render: h => h(App)
