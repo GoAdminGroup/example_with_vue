@@ -13,6 +13,7 @@ export default {
   components: {
     AppMain
   },
+
   mixins: [ResizeMixin],
   computed: {
     classObj() {
