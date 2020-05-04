@@ -3,13 +3,16 @@ BACKEND=./backend
 all: serve
 
 serve:
-	$(BACKEND)
+	NODE_ENV=production npm --prefix ./src/adminlte run build
+	NODE_ENV=production $(BACKEND)
 
 serve-quiet:
-	$(BACKEND) --debug=true --quiet=true
+	NODE_ENV=production npm --prefix ./src/adminlte run build
+	NODE_ENV=production $(BACKEND) --debug=true --quiet=true
 
 serve-element:
-	$(BACKEND) --debug=true --theme=sword --ui_theme=element
+	NODE_ENV=production npm --prefix ./src/element run build
+	NODE_ENV=production $(BACKEND) --debug=true --theme=sword --ui_theme=element
 
 build:
 	npm --prefix=./src run build
