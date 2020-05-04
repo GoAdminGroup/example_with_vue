@@ -236,6 +236,19 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/tools',
+    component: Layout,
+    children: [
+      {
+        path: 'build',
+        component: () => import('@/views/tools/build'),
+        name: 'FormBuilder',
+        meta: { title: 'FormBuilder', icon: 'edit' }
+      }
+    ]
+  },
+
+  {
     path: '/error',
     component: Layout,
     redirect: 'noRedirect',
