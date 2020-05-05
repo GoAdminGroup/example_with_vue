@@ -45,7 +45,7 @@ cp backend ./../frontend
 ```bash
 cd frontend
 # build vue
-NODE_ENV=production npm --prefix ./src run build
+NODE_ENV=production npm --prefix ./src/element run build
 # use the backend binary file to serve instead of node
 NODE_ENV=production ./backend  --debug=true --theme=sword --ui_theme=element 
 ```
