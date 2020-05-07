@@ -54,7 +54,9 @@ NODE_ENV=production ./backend  --debug=true --theme=sword --ui_theme=element
 
 更多命令，请看 Makefile。
 
-打开：[http://localhost:9033/admin/login](http://localhost:9033/admin/login)，登录后可以看到对应vue页面。
+打开：[http://localhost:9033/admin/login](http://localhost:9033/admin/login)
+
+账号：admin 密码：admin，登录后可以看到对应vue页面。
 
 程序会自动监听```./src/src```下文件变化，有变化则执行```npm --prefix ./src run build```命令进行编译。
 
