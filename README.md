@@ -45,7 +45,7 @@ cp backend ./../frontend
 ```bash
 cd frontend
 # install dependencies
-npm install --prefix ./src/element
+npm install --registry=https://registry.npm.taobao.org --prefix ./src/element
 # build vue project
 NODE_ENV=production npm --prefix ./src/element run build
 # use the backend binary file to serve instead of node
