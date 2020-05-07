@@ -34,7 +34,7 @@ cd goadmin-vue-example/backend
 
 # build binary file
 GO111MODULE=on go build -o ./backend .
-# give the binary file to all frontend developers
+# send the binary file to all frontend developers
 cp backend ./../frontend
 ```
 
@@ -44,7 +44,7 @@ cp backend ./../frontend
 
 ```bash
 cd frontend
-# build vue
+# build vue project
 NODE_ENV=production npm --prefix ./src/element run build
 # use the backend binary file to serve instead of node
 NODE_ENV=production ./backend  --debug=true --theme=sword --ui_theme=element 
