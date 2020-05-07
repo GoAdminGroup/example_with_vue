@@ -30,7 +30,7 @@ backend文件夹下是所有后端开发文件，frontend文件夹下是所有�
 
 ```bash
 git clone https://github.com/GoAdminGroup/goadmin-vue-example.git
-cd backend
+cd goadmin-vue-example/backend
 
 # build binary file
 GO111MODULE=on go build -o ./backend .
