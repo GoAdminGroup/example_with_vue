@@ -69,7 +69,7 @@ func main() {
 		}
 	}
 
-	if err := eng.AddConfig(cfg).
+	if err := eng.AddConfig(&cfg).
 		Use(r); err != nil {
 		panic(err)
 	}

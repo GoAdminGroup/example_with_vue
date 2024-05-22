@@ -25,7 +25,7 @@ import nestedRouter from './modules/nested'
  * meta : {
     roles: ['admin','editor']    control the page roles (you can set multiple roles)
     title: 'title'               the name show in sidebar and breadcrumb (recommend set)
-    icon: 'svg-name'             the icon show in the sidebar
+    icon: 'svg-name'/'el-icon-x' the icon show in the sidebar
     noCache: true                if set true, the page will no be cached(default is false)
     affix: true                  if set true, the tag will affix in the tags-view
     breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
@@ -197,7 +197,7 @@ export const asyncRoutes = [
     name: 'Example',
     meta: {
       title: 'Example',
-      icon: 'example'
+      icon: 'el-icon-s-help'
     },
     children: [
       {
@@ -231,19 +231,6 @@ export const asyncRoutes = [
         component: () => import('@/views/tab/index'),
         name: 'Tab',
         meta: { title: 'Tab', icon: 'tab' }
-      }
-    ]
-  },
-
-  {
-    path: '/tools',
-    component: Layout,
-    children: [
-      {
-        path: 'build',
-        component: () => import('@/views/tools/build'),
-        name: 'FormBuilder',
-        meta: { title: 'FormBuilder', icon: 'edit' }
       }
     ]
   },
@@ -401,10 +388,9 @@ export const asyncRoutes = [
 ]
 
 const createRouter = () => new Router({
-  mode: 'history', // require service support
-  base: '/admin/vue',
+  // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes.concat(asyncRoutes)
+  routes: constantRoutes
 })
 
 const router = createRouter()

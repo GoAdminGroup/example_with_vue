@@ -6,6 +6,7 @@ import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 
 import Element from 'element-ui'
 import './styles/element-variables.scss'
+import enLang from 'element-ui/lib/locale/lang/en'// 如果使用中文语言包请默认支持，无需额外引入，请删除该依赖
 
 import '@/styles/index.scss' // global css
 
@@ -14,7 +15,7 @@ import store from './store'
 import router from './router'
 
 import './icons' // icon
-// import './permission' // permission control
+import './permission' // permission control
 import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
@@ -33,7 +34,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 Vue.use(Element, {
-  size: Cookies.get('size') || 'medium' // set element-ui default size
+  size: Cookies.get('size') || 'medium', // set element-ui default size
+  locale: enLang // 如果使用中文，无需设置，请删除
 })
 
 // register global utility filters
@@ -47,25 +49,5 @@ new Vue({
   el: '#app',
   router,
   store,
-  created: function() {
-    const that = this
-    /* eslint-disable */
-    let jump = function(ele, e) {
-      let href = ele.attr('href');
-      const now_url = document.location.href;
-      const url_prefix = '/admin/vue';
-      href = href.replace(window.location.protocol + "//" + window.location.host, "");
-      if (href.indexOf(url_prefix) !== -1 && now_url.indexOf(url_prefix) !== -1) {
-        e.preventDefault();
-        that.$router.push({ path: href.replace(url_prefix, '') })
-      }
-    };
-    $('.sidebar a').on('click', function(e) {
-      jump($(this), e)
-    });
-    $('.nav.nav-tabs a').on('click', function(e) {
-      jump($(this), e)
-    })
-  },
   render: h => h(App)
 })

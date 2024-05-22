@@ -16,7 +16,6 @@ backend文件夹下是所有后端开发文件，frontend文件夹下是所有�
 
 - [adminlte](https://github.com/devjin0617/vue2-admin-lte)
 - [element ui](https://github.com/PanJiaChen/vue-element-admin)
-- [ant design](https://github.com/iczer/vue-antd-admin)
 
 ## 开发流程
 
@@ -47,7 +46,7 @@ npm install --registry=https://registry.npmmirror.com --prefix ./src/element
 # build vue project
 NODE_ENV=production npm --prefix ./src/element run build
 # use the backend binary file to serve instead of node
-NODE_ENV=production ./backend  --debug=true --theme=sword --ui_theme=element 
+NODE_ENV=production ./backend --debug=true --theme=sword --ui_theme=element 
 ```
 
 更多命令，请看 Makefile。
